@@ -1,3 +1,6 @@
+#include <string>
+using namespace std;
+
 class Node{
 	private:
 		bool used;
@@ -5,6 +8,7 @@ class Node{
 		Node *next;
 	public: 
 		Node();
+		Node(bool used);
 		Node(bool used, string pName);
 		Node(bool used, string pName, Node *next);
 		~Node();
@@ -26,10 +30,13 @@ class LinkedList {
 		Node *getHead();
 		void setHead(Node *head);
 
-		void insert(bool used, string pName);
+		void insert();
 		void remove(bool used, string pName);
 		void print();
-		bool search(bool used, string pName);
+		bool search(string name);
+		int searchRemove(string pName);
+		int fragCount();
+		bool addProgram(string name, int size);
 		void clear();
 
 };

@@ -36,7 +36,8 @@ class LinkedList {
 		bool search(string name);
 		int searchRemove(string pName);
 		int fragCount();
-		bool addProgram(string name, int size);
+		bool addWorstProgram(string name, int size);
+		bool addBestProgram(string name, int size);
 		void clear();
 
 };

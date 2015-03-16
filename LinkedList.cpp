@@ -181,7 +181,7 @@ int LinkedList::fragCount(){
 
 bool LinkedList::addProgram(string name, int size){
 	Node *temp = head;
-	Node *greatest = NULL;
+	Node *greatest = temp;
 	int maxCount = 0;
 	int count = 0;
 	Node *firstNode = temp;

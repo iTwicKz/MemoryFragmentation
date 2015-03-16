@@ -4,6 +4,8 @@
 
 using namespace std;
 
+//publid Node Methods
+//constructor
 Node::Node() {
 	this->used = false;
 	this->pName = "";
@@ -11,27 +13,7 @@ Node::Node() {
 	
 }
 
-/*
-Node::Node(boolean used){
-	this->used = used;
-	this->pName = "";
-	this->next = NULL;
-}
-
-Node::Node(boolean used, string pName) {
-	this->used = used;
-	this->pName = pName;
-	this->next = NULL;
-	
-}
-
-Node::Node(boolean used, string pName, Node *next) {
-	this->used = used;
-	this->pName = pName;
-	this->next = next;
-	
-}  */
-
+//deconstructor
 Node::~Node(){
 	this->next = NULL;
 }
@@ -60,8 +42,7 @@ void Node::setNext(Node *next){
 	this->next = next;
 }
 
-//public methods for LinkedList
-
+//public LinkedList methods
 LinkedList::LinkedList(){
 	this->head = NULL;
 }
@@ -83,7 +64,9 @@ void LinkedList::setHead(Node *head){
 }
 
 void LinkedList::insert(){
+	//because all initialized the same, no need to input variables
 	Node * newNode = new Node();
+	//if none, creates new head
 	if(head == NULL) {
 		head = newNode;
 		return;
@@ -95,31 +78,14 @@ void LinkedList::insert(){
 	temp->setNext(newNode);
 }
 
-/*
-void LinkedList::remove(bool used, string pName){
-	Node * newHead = new Node(false, "", head);
-	Node * prev = newHead;
-	Node * curr = head;
-	while(curr != NULL){
-		if(curr->getName() == pName){
-			prev->setNext(curr->getNext());
-			delete curr;
-			curr = prev->getNext();
-		} else {
-			curr = curr->getNext();
-			prev = prev->getNext();
-	}
-	head = newHead->getNext();
-	delete newHead;
-}
-} */
-
 void LinkedList::print(){
+	//checks if LinkedList exists
 	if(head == NULL) {
 		cout << "LinkedList is empty" <<endl;
 	}
 	Node * temp = head;
 	int count = 0;
+	cout<<endl;
 	while(temp != NULL){
 		if(temp->getUsed() == true){
 			cout<< temp->getName() << "\t";
@@ -131,13 +97,12 @@ void LinkedList::print(){
 			temp = temp->getNext();
 			count++;	
 		}
-		if(count%8 == 0){
+		if(count%8 == 0 && count != 32){
 			cout<< endl;
 		}
 	}
-	cout<< endl;
+	
 }
-
 
 bool LinkedList::search(string name){
 	Node *temp = head;
@@ -158,6 +123,7 @@ int LinkedList::searchRemove(string value){
 				count++;
 				temp = temp->getNext();
 			}
+			else temp = temp->getNext();
 		}
 		return count;
 }
@@ -165,21 +131,29 @@ int LinkedList::searchRemove(string value){
 int LinkedList::fragCount(){
 	Node *temp = head;
 	int count = 0;
+	Node *last = temp;
 	
 	while(temp != NULL){
 		bool used = temp->getUsed();
 		if(!used){
 			Node *next = temp->getNext();
-			if(next->getUsed()){
+			if(next != NULL){
+				if(next->getUsed()){
 				count++;
+				}
 			}
 		}
+		last = temp;
 		temp = temp->getNext();
 	}
-	return count++;
+	bool lastUsed = false;
+	lastUsed = last->getUsed();
+	if(lastUsed) return count;
+	return count + 1;
 }
 
-bool LinkedList::addProgram(string name, int size){
+bool LinkedList::addWorstProgram(string name, int size){
+	//initializing pseudo-head
 	Node *temp = head;
 	Node *greatest = temp;
 	int maxCount = 0;
@@ -187,17 +161,36 @@ bool LinkedList::addProgram(string name, int size){
 	Node *firstNode = temp;
 	bool success = false;
 	
-	//worst
 	while (temp != NULL){
+		
 		bool used = temp->getUsed();
+		Node *next = temp->getNext();
+		//check if space is not used
 		if(!used){
 			count++;
-			temp = temp->getNext();
-		}
-		else{
-			if(count > maxCount && count < size){
+			//check if it is proper end empty space
+			if(next == NULL && count > maxCount && count >= size){
+				count++;
 				maxCount = count;
 				greatest = firstNode;
+				break;
+			}
+			
+			temp = temp->getNext();
+			
+			
+		}
+		
+		//if it is empty
+		else{
+			count++;
+			if(count > maxCount && count > size){
+				
+				maxCount = count;
+				greatest = firstNode;
+				count = 0;
+				temp = temp->getNext();
+				firstNode = temp;
 			}
 			else{
 				count = 0;
@@ -206,14 +199,84 @@ bool LinkedList::addProgram(string name, int size){
 			}
 		}
 	}
-	for(int i = 0; i < size; i++){
 		Node *start = greatest;
+	//check if available size is larger than size needed
+	if(maxCount <= size){
+		success = false;
+	}
+	else{
+	for(int i = 0; i < size; i++){
+		
 		start->setUsed(true);
 		start->setName(name);
 		success = true;
 		start = start->getNext();
 	}
+	}
+	return success;
+}
+
+bool LinkedList::addBestProgram(string name, int size){
+	//initializing pseudo-head
+	Node *temp = head;
+	Node *greatest = temp;
+	int minCount = 33;
+	int count = 0;
+	Node *firstNode = temp;
+	bool success = false;
 	
+	
+	while (temp != NULL){
+		
+		bool used = temp->getUsed();
+		Node *next = temp->getNext();
+		//check if space is not used
+		if(!used){
+			count++;
+			//check if it is proper end empty space
+			if(next == NULL && count < minCount && count >= size){
+				count++;
+				minCount = count;
+				greatest = firstNode;
+				break;
+			}
+			
+			temp = temp->getNext();
+			
+		}
+		
+		//if it is empty
+		else{
+			count++;
+			if(count < minCount && count > size){
+				
+				minCount = count;
+				greatest = firstNode;
+				count = 0;
+				temp = temp->getNext();
+				firstNode = temp;
+			}
+			else{
+				count = 0;
+				temp = temp->getNext();
+				firstNode = temp;
+			}
+		}
+	}
+		Node *start = greatest;
+	//check if available size is larger than size needed
+	if(minCount <= size){
+		success = false;
+	}
+	else{
+	for(int i = 0; i < size; i++){
+		
+		start->setUsed(true);
+		start->setName(name);
+		success = true;
+		start = start->getNext();
+	}
+	}
 	return success;
 }
 
